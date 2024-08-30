@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package org.sync.proto;
+
+option java_multiple_files = true;
+option java_package = "org.sync.proto";
+
+service FileSync {
+  rpc create(CreateRequest) returns(OperationResponse) {}
+  rpc modify(ModifyRequest) returns(OperationResponse) {}
+  rpc delete(DeleteRequest) returns(OperationResponse) {}
+  rpc rename(RenameRequest) returns(OperationResponse) {}
+}
+
+// Requests and Response
+
+message CreateRequest {
+  string fileName = 1;
+}
+
+message ModifyRequest {
+  string fileName = 1;
+  FileContent file = 2;
+}
+
+message DeleteRequest {
+  string fileName = 1;
+}
+
+message RenameRequest {
+  string oldFileName = 1;
+  string newFileName = 2;
+}
+
+message OperationResponse {
+  string message = 1;
+  Status status = 2;
+}
+
+message FileContent {
+  bytes content = 1;
+}
+
+enum Status {
+  SUCCESS = 0;
+  FAILURE = 1;
+}
