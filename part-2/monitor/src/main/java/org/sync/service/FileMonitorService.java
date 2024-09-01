@@ -33,9 +33,9 @@ public class FileMonitorService {
      * * MODIFY
      * * RENAME
      */
-    @Async
     @Bean
-    @Scheduled(initialDelay = 15000, fixedDelay = 10000)
+    @Async
+    @Scheduled(initialDelay = 10000, fixedDelay = 15000)
     public void monitor() {
         log.info("Monitor is Running");
         List<WatchEvent<?>> watchEvents = watchKey.pollEvents();

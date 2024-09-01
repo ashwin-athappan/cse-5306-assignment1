@@ -4,9 +4,6 @@
 
 ## Part 2
 
-First mvn clean install in parent directory
-
-RUN SERVER
-mvn -pl server spring-boot:run
+Please Refer Documentation [here](part-2/part-2-readme.md)
 
 ## Part 3
