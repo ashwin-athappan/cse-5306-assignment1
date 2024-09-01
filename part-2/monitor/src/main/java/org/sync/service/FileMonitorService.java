@@ -1,17 +1,16 @@
 package org.sync.service;
 
 import com.google.protobuf.ByteString;
-import jakarta.annotation.PreDestroy;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.sync.proto.FileContent;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.List;
@@ -21,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class FileMonitorService {
 
-    private final WatchService watchService;
+    private final WatchKey watchKey;
     private final Path rootDirectory;
     private final FileSyncService fileSyncService;
 
@@ -36,55 +35,33 @@ public class FileMonitorService {
      */
     @Async
     @Bean
+    @Scheduled(initialDelay = 15000, fixedDelay = 10000)
     public void monitor() {
         log.info("Monitor is Running");
-        try {
-            while (true) {
-                log.info("Monitoring...");
-                WatchKey key = watchService.take();
+        List<WatchEvent<?>> watchEvents = watchKey.pollEvents();
 
-                List<WatchEvent<?>> watchEvents = key.pollEvents();
+        if (watchEvents.size() == 2) {
+            WatchEvent<?> first = watchEvents.get(0);
+            WatchEvent<?> second = watchEvents.get(1);
 
-                if (watchEvents.size() == 2) {
-                    WatchEvent<?> first = watchEvents.get(0);
-                    WatchEvent<?> second = watchEvents.get(1);
-
-                    if (first.kind() == StandardWatchEventKinds.ENTRY_CREATE && second.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
-                        log.info("Renamed {} to {}", second.context(), first.context());
-                    } else {
-                        for (WatchEvent<?> watchEvent : watchEvents) {
-                            handleEvents(watchEvent);
-                        }
-                    }
-                } else {
-                    for (WatchEvent<?> watchEvent : watchEvents) {
-                        handleEvents(watchEvent);
-                    }
+            if (first.kind() == StandardWatchEventKinds.ENTRY_CREATE && second.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
+                log.info("Renamed {} to {}", second.context(), first.context());
+            } else {
+                for (WatchEvent<?> watchEvent : watchEvents) {
+                    handleEvents(watchEvent);
                 }
-
-                boolean valid = key.reset();
-                if (!valid) {
-                    log.warn("Watcher is no longer valid. Directory may have been deleted.");
-                }
-                log.info("Operation Complete");
             }
-        } catch (InterruptedException e) {
-            log.error("Error while monitoring files: {}", e.getMessage());
-            Thread.currentThread().interrupt();
-        }
-        log.info("Monitor has Stopped");
-    }
-
-    @PreDestroy
-    public void stopMonitor() {
-        log.info("Stopping monitor");
-        if (watchService != null) {
-            try {
-                watchService.close();
-            } catch (IOException e) {
-                log.error("exception while closing the monitoring service");
+        } else {
+            for (WatchEvent<?> watchEvent : watchEvents) {
+                handleEvents(watchEvent);
             }
         }
+
+        boolean valid = watchKey.reset();
+        if (!valid) {
+            log.warn("Watcher is no longer valid. Directory may have been deleted.");
+        }
+        log.info("Monitor Stopped");
     }
 
     public void handleEvents(WatchEvent<?> watchEvent) {

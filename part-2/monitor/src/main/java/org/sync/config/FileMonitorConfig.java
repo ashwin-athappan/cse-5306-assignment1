@@ -1,5 +1,6 @@
 package org.sync.config;
 
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +25,8 @@ public class FileMonitorConfig {
     }
 
     @Bean
-    public WatchService getWatchService() {
-        WatchService watchService;
+    public WatchKey getWatchService() {
+        WatchKey watchKey;
         try {
             rootDirectory  = Paths.get(System.getProperty("user.dir") + "/monitor/src/main/resources/files");
 
@@ -33,9 +34,9 @@ public class FileMonitorConfig {
                 throw new RuntimeException("incorrect monitoring folder: " + rootDirectory);
             }
 
-            watchService = FileSystems.getDefault().newWatchService();
+            WatchService watchService = FileSystems.getDefault().newWatchService();
 
-            rootDirectory.register(watchService,
+            watchKey = rootDirectory.register(watchService,
                     StandardWatchEventKinds.ENTRY_CREATE,
                     StandardWatchEventKinds.ENTRY_DELETE,
                     StandardWatchEventKinds.ENTRY_MODIFY);
@@ -44,7 +45,7 @@ public class FileMonitorConfig {
             throw new RuntimeException(e);
         }
 
-        return watchService;
+        return watchKey;
     }
 
 }

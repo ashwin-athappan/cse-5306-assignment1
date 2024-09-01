@@ -29,7 +29,9 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
             File newFile = new File(rootDirectory.toString() + "/" + fileName);
             boolean result = newFile.createNewFile();
 
-            OperationResponse operationResponse = OperationResponse.newBuilder().setMessage("File Created in Server : " + fileName).setStatus(Status.SUCCESS).build();
+            OperationResponse operationResponse = OperationResponse.newBuilder()
+                    .setMessage("File Created in Server : " + fileName)
+                    .setStatus(Status.SUCCESS).build();
 
             if (result) {
                 responseObserver.onNext(operationResponse);
@@ -40,6 +42,7 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
 
         } catch (IOException e) {
             log.error("File Creation Failed", e);
+            responseObserver.onError(new Throwable("File Creation Failed"));
         }
     }
 
@@ -58,7 +61,9 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
                 throw new FileNotFoundException("File Not Found");
             }
 
-            OperationResponse operationResponse = OperationResponse.newBuilder().setMessage("File Deleted in Server : " + fileName).setStatus(Status.SUCCESS).build();
+            OperationResponse operationResponse = OperationResponse.newBuilder()
+                    .setMessage("File Deleted in Server : " + fileName)
+                    .setStatus(Status.SUCCESS).build();
 
             if (result) {
                 responseObserver.onNext(operationResponse);
@@ -85,7 +90,9 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
                 result = true;
             }
 
-            OperationResponse operationResponse = OperationResponse.newBuilder().setMessage("File Modified in Server : " + fileName).setStatus(Status.SUCCESS).build();
+            OperationResponse operationResponse = OperationResponse.newBuilder()
+                    .setMessage("File Modified in Server : " + fileName)
+                    .setStatus(Status.SUCCESS).build();
 
             if (result) {
                 responseObserver.onNext(operationResponse);
@@ -96,6 +103,33 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
 
         } catch (IOException e) {
             log.error("File Modification Failed", e);
+            responseObserver.onError(new Throwable("File does not exist in the server"));
+        }
+    }
+
+    @Override
+    public void rename(RenameRequest request, StreamObserver<OperationResponse> responseObserver) {
+        try {
+            String oldFileName = request.getOldFileName();
+            String newFileName = request.getNewFileName();
+            log.info("RENAME - Request received in Server - Renaming : {} to {}", oldFileName, newFileName);
+            File oldFile = new File(rootDirectory.toString() + "/" + oldFileName);
+            File newFile = new File(rootDirectory.toString() + "/" + newFileName);
+            boolean result = oldFile.renameTo(newFile);
+
+            OperationResponse operationResponse = OperationResponse.newBuilder()
+                    .setMessage("Rename successful : " + oldFileName + " to " + newFileName)
+                    .setStatus(Status.SUCCESS).build();
+
+            if (result) {
+                responseObserver.onNext(operationResponse);
+                responseObserver.onCompleted();
+            } else {
+                responseObserver.onError(new Throwable("File Rename Failed"));
+            }
+        } catch (Exception e) {
+            log.error("File Rename Failed", e);
+            responseObserver.onError(new Throwable("File does not exist in the server"));
         }
     }
 }
