@@ -16,6 +16,7 @@ service FileSync {
 
 message CreateRequest {
   string fileName = 1;
+  FileContent file = 2;
 }
 
 message ModifyRequest {

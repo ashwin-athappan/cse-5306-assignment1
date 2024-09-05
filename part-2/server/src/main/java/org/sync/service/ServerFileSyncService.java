@@ -20,14 +20,30 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
 
     private final Path rootDirectory;
 
+    /**
+     * @description This is the grpc implementation for creating a file.
+     *
+     * @param request This is the request coming in from the client
+     * @param responseObserver This is the observer sent by the client.
+     *                         This client uses it so that it does not have to wait for the response.
+     *                         This makes the process Asynchronous.
+     *                         The response is sent back through the observer.
+     */
     @Override
     public void create(CreateRequest request, StreamObserver<OperationResponse> responseObserver) {
         try {
             String fileName = request.getFileName();
+            FileContent fileContent = request.getFile();
+            ByteString byteStringContent = fileContent.getContent();
+            byte[] content = byteStringContent.toByteArray();
             log.info("CREATE - File Received in Server : {}", fileName);
-
             File newFile = new File(rootDirectory.toString() + "/" + fileName);
-            boolean result = newFile.createNewFile();
+            boolean result;
+
+            try (FileOutputStream fos = new FileOutputStream(rootDirectory.toString() + "/" + fileName)) {
+                fos.write(content);
+                result = true;
+            }
 
             OperationResponse operationResponse = OperationResponse.newBuilder()
                     .setMessage("File Created in Server : " + fileName)
@@ -46,6 +62,15 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
         }
     }
 
+    /**
+     * @description This is the grpc implementation for deleting a file.
+     *
+     * @param request This is the request coming in from the client
+     * @param responseObserver This is the observer sent by the client.
+     *                         This client uses it so that it does not have to wait for the response.
+     *                         This makes the process Asynchronous.
+     *                         The response is sent back through the observer.
+     */
     @Override
     public void delete(DeleteRequest request, StreamObserver<OperationResponse> responseObserver) {
         try {
@@ -76,6 +101,15 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
         }
     }
 
+    /**
+     * @description This is the grpc implementation for modifying a file.
+     *
+     * @param request This is the request coming in from the client
+     * @param responseObserver This is the observer sent by the client.
+     *                         This client uses it so that it does not have to wait for the response.
+     *                         This makes the process Asynchronous.
+     *                         The response is sent back through the observer.
+     */
     @Override
     public void modify(ModifyRequest request, StreamObserver<OperationResponse> responseObserver) {
         try {
@@ -84,7 +118,8 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
             ByteString byteStringContent = fileContent.getContent();
             byte[] content = byteStringContent.toByteArray();
             log.info("MODIFY - File Received in Server : {}", fileName);
-            boolean result = false;
+
+            boolean result;
             try (FileOutputStream fos = new FileOutputStream(rootDirectory.toString() + "/" + fileName)) {
                 fos.write(content);
                 result = true;
@@ -107,6 +142,15 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
         }
     }
 
+    /**
+     * @description This is the grpc implementation for renaming a file.
+     *
+     * @param request This is the request coming in from the client
+     * @param responseObserver This is the observer sent by the client.
+     *                         This client uses it so that it does not have to wait for the response.
+     *                         This makes the process Asynchronous.
+     *                         The response is sent back through the observer.
+     */
     @Override
     public void rename(RenameRequest request, StreamObserver<OperationResponse> responseObserver) {
         try {

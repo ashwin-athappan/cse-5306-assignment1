@@ -14,10 +14,6 @@ public class FileMonitorConfig {
 
     private Path rootDirectory;
 
-    /**
-     * @description
-     *
-     */
     @Bean
     public Path getRootDirectory() {
         rootDirectory  = Paths.get(System.getProperty("user.dir") + "/monitor/src/main/resources/files");

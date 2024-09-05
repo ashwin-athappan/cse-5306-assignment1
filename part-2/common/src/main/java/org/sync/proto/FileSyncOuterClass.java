@@ -53,25 +53,26 @@ public final class FileSyncOuterClass {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\016fileSync.proto\022\016org.sync.proto\"!\n\rCrea" +
-      "teRequest\022\020\n\010fileName\030\001 \001(\t\"L\n\rModifyReq" +
-      "uest\022\020\n\010fileName\030\001 \001(\t\022)\n\004file\030\002 \001(\0132\033.o" +
-      "rg.sync.proto.FileContent\"!\n\rDeleteReque" +
-      "st\022\020\n\010fileName\030\001 \001(\t\"9\n\rRenameRequest\022\023\n" +
-      "\013oldFileName\030\001 \001(\t\022\023\n\013newFileName\030\002 \001(\t\"" +
-      "L\n\021OperationResponse\022\017\n\007message\030\001 \001(\t\022&\n" +
-      "\006status\030\002 \001(\0162\026.org.sync.proto.Status\"\036\n" +
-      "\013FileContent\022\017\n\007content\030\001 \001(\014*\"\n\006Status\022" +
-      "\013\n\007SUCCESS\020\000\022\013\n\007FAILURE\020\0012\302\002\n\010FileSync\022L" +
-      "\n\006create\022\035.org.sync.proto.CreateRequest\032" +
-      "!.org.sync.proto.OperationResponse\"\000\022L\n\006" +
-      "modify\022\035.org.sync.proto.ModifyRequest\032!." +
-      "org.sync.proto.OperationResponse\"\000\022L\n\006de" +
-      "lete\022\035.org.sync.proto.DeleteRequest\032!.or" +
-      "g.sync.proto.OperationResponse\"\000\022L\n\006rena" +
-      "me\022\035.org.sync.proto.RenameRequest\032!.org." +
-      "sync.proto.OperationResponse\"\000B\022\n\016org.sy" +
-      "nc.protoP\001b\006proto3"
+      "\n\016fileSync.proto\022\016org.sync.proto\"L\n\rCrea" +
+      "teRequest\022\020\n\010fileName\030\001 \001(\t\022)\n\004file\030\002 \001(" +
+      "\0132\033.org.sync.proto.FileContent\"L\n\rModify" +
+      "Request\022\020\n\010fileName\030\001 \001(\t\022)\n\004file\030\002 \001(\0132" +
+      "\033.org.sync.proto.FileContent\"!\n\rDeleteRe" +
+      "quest\022\020\n\010fileName\030\001 \001(\t\"9\n\rRenameRequest" +
+      "\022\023\n\013oldFileName\030\001 \001(\t\022\023\n\013newFileName\030\002 \001" +
+      "(\t\"L\n\021OperationResponse\022\017\n\007message\030\001 \001(\t" +
+      "\022&\n\006status\030\002 \001(\0162\026.org.sync.proto.Status" +
+      "\"\036\n\013FileContent\022\017\n\007content\030\001 \001(\014*\"\n\006Stat" +
+      "us\022\013\n\007SUCCESS\020\000\022\013\n\007FAILURE\020\0012\302\002\n\010FileSyn" +
+      "c\022L\n\006create\022\035.org.sync.proto.CreateReque" +
+      "st\032!.org.sync.proto.OperationResponse\"\000\022" +
+      "L\n\006modify\022\035.org.sync.proto.ModifyRequest" +
+      "\032!.org.sync.proto.OperationResponse\"\000\022L\n" +
+      "\006delete\022\035.org.sync.proto.DeleteRequest\032!" +
+      ".org.sync.proto.OperationResponse\"\000\022L\n\006r" +
+      "ename\022\035.org.sync.proto.RenameRequest\032!.o" +
+      "rg.sync.proto.OperationResponse\"\000B\022\n\016org" +
+      ".sync.protoP\001b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -82,7 +83,7 @@ public final class FileSyncOuterClass {
     internal_static_org_sync_proto_CreateRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_sync_proto_CreateRequest_descriptor,
-        new java.lang.String[] { "FileName", });
+        new java.lang.String[] { "FileName", "File", });
     internal_static_org_sync_proto_ModifyRequest_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_org_sync_proto_ModifyRequest_fieldAccessorTable = new

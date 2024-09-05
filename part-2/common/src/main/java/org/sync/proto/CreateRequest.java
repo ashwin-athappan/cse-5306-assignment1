@@ -55,6 +55,19 @@ private static final long serialVersionUID = 0L;
             fileName_ = s;
             break;
           }
+          case 18: {
+            org.sync.proto.FileContent.Builder subBuilder = null;
+            if (file_ != null) {
+              subBuilder = file_.toBuilder();
+            }
+            file_ = input.readMessage(org.sync.proto.FileContent.parser(), extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom(file_);
+              file_ = subBuilder.buildPartial();
+            }
+
+            break;
+          }
           default: {
             if (!parseUnknownField(
                 input, unknownFields, extensionRegistry, tag)) {
@@ -123,6 +136,29 @@ private static final long serialVersionUID = 0L;
     }
   }
 
+  public static final int FILE_FIELD_NUMBER = 2;
+  private org.sync.proto.FileContent file_;
+  /**
+   * <code>.org.sync.proto.FileContent file = 2;</code>
+   * @return Whether the file field is set.
+   */
+  public boolean hasFile() {
+    return file_ != null;
+  }
+  /**
+   * <code>.org.sync.proto.FileContent file = 2;</code>
+   * @return The file.
+   */
+  public org.sync.proto.FileContent getFile() {
+    return file_ == null ? org.sync.proto.FileContent.getDefaultInstance() : file_;
+  }
+  /**
+   * <code>.org.sync.proto.FileContent file = 2;</code>
+   */
+  public org.sync.proto.FileContentOrBuilder getFileOrBuilder() {
+    return getFile();
+  }
+
   private byte memoizedIsInitialized = -1;
   @java.lang.Override
   public final boolean isInitialized() {
@@ -140,6 +176,9 @@ private static final long serialVersionUID = 0L;
     if (!getFileNameBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 1, fileName_);
     }
+    if (file_ != null) {
+      output.writeMessage(2, getFile());
+    }
     unknownFields.writeTo(output);
   }
 
@@ -151,6 +190,10 @@ private static final long serialVersionUID = 0L;
     size = 0;
     if (!getFileNameBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, fileName_);
+    }
+    if (file_ != null) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(2, getFile());
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -169,6 +212,11 @@ private static final long serialVersionUID = 0L;
 
     if (!getFileName()
         .equals(other.getFileName())) return false;
+    if (hasFile() != other.hasFile()) return false;
+    if (hasFile()) {
+      if (!getFile()
+          .equals(other.getFile())) return false;
+    }
     if (!unknownFields.equals(other.unknownFields)) return false;
     return true;
   }
@@ -182,6 +230,10 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + FILENAME_FIELD_NUMBER;
     hash = (53 * hash) + getFileName().hashCode();
+    if (hasFile()) {
+      hash = (37 * hash) + FILE_FIELD_NUMBER;
+      hash = (53 * hash) + getFile().hashCode();
+    }
     hash = (29 * hash) + unknownFields.hashCode();
     memoizedHashCode = hash;
     return hash;
@@ -317,6 +369,12 @@ private static final long serialVersionUID = 0L;
       super.clear();
       fileName_ = "";
 
+      if (fileBuilder_ == null) {
+        file_ = null;
+      } else {
+        file_ = null;
+        fileBuilder_ = null;
+      }
       return this;
     }
 
@@ -344,6 +402,11 @@ private static final long serialVersionUID = 0L;
     public org.sync.proto.CreateRequest buildPartial() {
       org.sync.proto.CreateRequest result = new org.sync.proto.CreateRequest(this);
       result.fileName_ = fileName_;
+      if (fileBuilder_ == null) {
+        result.file_ = file_;
+      } else {
+        result.file_ = fileBuilder_.build();
+      }
       onBuilt();
       return result;
     }
@@ -395,6 +458,9 @@ private static final long serialVersionUID = 0L;
       if (!other.getFileName().isEmpty()) {
         fileName_ = other.fileName_;
         onChanged();
+      }
+      if (other.hasFile()) {
+        mergeFile(other.getFile());
       }
       this.mergeUnknownFields(other.unknownFields);
       onChanged();
@@ -499,6 +565,125 @@ private static final long serialVersionUID = 0L;
       fileName_ = value;
       onChanged();
       return this;
+    }
+
+    private org.sync.proto.FileContent file_;
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.sync.proto.FileContent, org.sync.proto.FileContent.Builder, org.sync.proto.FileContentOrBuilder> fileBuilder_;
+    /**
+     * <code>.org.sync.proto.FileContent file = 2;</code>
+     * @return Whether the file field is set.
+     */
+    public boolean hasFile() {
+      return fileBuilder_ != null || file_ != null;
+    }
+    /**
+     * <code>.org.sync.proto.FileContent file = 2;</code>
+     * @return The file.
+     */
+    public org.sync.proto.FileContent getFile() {
+      if (fileBuilder_ == null) {
+        return file_ == null ? org.sync.proto.FileContent.getDefaultInstance() : file_;
+      } else {
+        return fileBuilder_.getMessage();
+      }
+    }
+    /**
+     * <code>.org.sync.proto.FileContent file = 2;</code>
+     */
+    public Builder setFile(org.sync.proto.FileContent value) {
+      if (fileBuilder_ == null) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        file_ = value;
+        onChanged();
+      } else {
+        fileBuilder_.setMessage(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.org.sync.proto.FileContent file = 2;</code>
+     */
+    public Builder setFile(
+        org.sync.proto.FileContent.Builder builderForValue) {
+      if (fileBuilder_ == null) {
+        file_ = builderForValue.build();
+        onChanged();
+      } else {
+        fileBuilder_.setMessage(builderForValue.build());
+      }
+
+      return this;
+    }
+    /**
+     * <code>.org.sync.proto.FileContent file = 2;</code>
+     */
+    public Builder mergeFile(org.sync.proto.FileContent value) {
+      if (fileBuilder_ == null) {
+        if (file_ != null) {
+          file_ =
+            org.sync.proto.FileContent.newBuilder(file_).mergeFrom(value).buildPartial();
+        } else {
+          file_ = value;
+        }
+        onChanged();
+      } else {
+        fileBuilder_.mergeFrom(value);
+      }
+
+      return this;
+    }
+    /**
+     * <code>.org.sync.proto.FileContent file = 2;</code>
+     */
+    public Builder clearFile() {
+      if (fileBuilder_ == null) {
+        file_ = null;
+        onChanged();
+      } else {
+        file_ = null;
+        fileBuilder_ = null;
+      }
+
+      return this;
+    }
+    /**
+     * <code>.org.sync.proto.FileContent file = 2;</code>
+     */
+    public org.sync.proto.FileContent.Builder getFileBuilder() {
+      
+      onChanged();
+      return getFileFieldBuilder().getBuilder();
+    }
+    /**
+     * <code>.org.sync.proto.FileContent file = 2;</code>
+     */
+    public org.sync.proto.FileContentOrBuilder getFileOrBuilder() {
+      if (fileBuilder_ != null) {
+        return fileBuilder_.getMessageOrBuilder();
+      } else {
+        return file_ == null ?
+            org.sync.proto.FileContent.getDefaultInstance() : file_;
+      }
+    }
+    /**
+     * <code>.org.sync.proto.FileContent file = 2;</code>
+     */
+    private com.google.protobuf.SingleFieldBuilderV3<
+        org.sync.proto.FileContent, org.sync.proto.FileContent.Builder, org.sync.proto.FileContentOrBuilder> 
+        getFileFieldBuilder() {
+      if (fileBuilder_ == null) {
+        fileBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
+            org.sync.proto.FileContent, org.sync.proto.FileContent.Builder, org.sync.proto.FileContentOrBuilder>(
+                getFile(),
+                getParentForChildren(),
+                isClean());
+        file_ = null;
+      }
+      return fileBuilder_;
     }
     @java.lang.Override
     public final Builder setUnknownFields(

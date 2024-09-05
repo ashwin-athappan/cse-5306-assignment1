@@ -18,4 +18,19 @@ public interface CreateRequestOrBuilder extends
    */
   com.google.protobuf.ByteString
       getFileNameBytes();
+
+  /**
+   * <code>.org.sync.proto.FileContent file = 2;</code>
+   * @return Whether the file field is set.
+   */
+  boolean hasFile();
+  /**
+   * <code>.org.sync.proto.FileContent file = 2;</code>
+   * @return The file.
+   */
+  org.sync.proto.FileContent getFile();
+  /**
+   * <code>.org.sync.proto.FileContent file = 2;</code>
+   */
+  org.sync.proto.FileContentOrBuilder getFileOrBuilder();
 }
