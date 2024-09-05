@@ -7,7 +7,6 @@ import org.sync.utils.UtilitiesService;
 
 import java.io.*;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
 @Slf4j
@@ -169,14 +168,14 @@ public class DirectoryDiffService {
     }
 
     public void addOrModifyFile(String path) {
-        log.info("addFile::Adding file {} to checkpoint at {}", path, checkpointPath);
+        log.info("addOrModifyFile::Adding file {} to checkpoint at {}", path, checkpointPath);
         try {
             long lastModifiedTime = utilitiesService.getLastModified(path);
-            log.info("addFile::Updating checkpoint and cache");
+            log.info("addOrModifyFile::Updating checkpoint and cache");
             updateCache(path, lastModifiedTime);
             updateCheckPoint();
         } catch (IOException e) {
-            log.error("addFile:: Error occurred {}", e.getMessage());
+            log.error("addOrModifyFile:: Error occurred {}", e.getMessage());
         }
     }
 
@@ -186,11 +185,19 @@ public class DirectoryDiffService {
             checkpoint.remove(path);
             updateCheckPoint();
         } catch (IOException e) {
-            log.error("deleteFile:: Error occurred {}", e.getMessage());
+            log.error("deleteFile::Error occurred {}", e.getMessage());
         }
     }
 
     public void renameFile(String oldPath, String newPath) {
-
+        log.info("renameFile::Renaming file {} to {}", oldPath, newPath);
+        try {
+            checkpoint.remove(oldPath);
+            long lastModifiedTime = utilitiesService.getLastModified(newPath);
+            updateCache(newPath, lastModifiedTime);
+            updateCheckPoint();
+        } catch (IOException e) {
+            log.error("renameFile::Error occurred {}", e.getMessage());
+        }
     }
 }

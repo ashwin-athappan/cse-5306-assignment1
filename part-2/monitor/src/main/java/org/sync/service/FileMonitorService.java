@@ -51,9 +51,12 @@ public class FileMonitorService {
 
             if (first.kind() == StandardWatchEventKinds.ENTRY_CREATE && second.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
                 log.info("monitor::Renamed {} to {}", second.context(), first.context());
-                String oldName = first.context().toString();
-                String newName = second.context().toString();
+                String oldName = second.context().toString();
+                String newName = first.context().toString();
                 fileSyncService.renameFile(oldName, newName);
+                String oldPath = rootDirectory.toAbsolutePath() + "/" + oldName;
+                String newPath = rootDirectory.toAbsolutePath() + "/" + newName;
+                directoryDiffService.renameFile(oldPath, newPath);
             } else {
                 for (WatchEvent<?> watchEvent : watchEvents) {
                     handleEvents(watchEvent);

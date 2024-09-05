@@ -84,7 +84,7 @@ public class FileSyncService {
      */
     public void modifyFile(String fileName, FileContent fileContent) {
         ModifyRequest request = ModifyRequest.newBuilder().setFileName(fileName).setFile(fileContent).build();
-        log.info("modifyFile::Modify Request Generated - {}", request);
+        log.info("modifyFile::Modify Request Generated");
         asyncStub.modify(request, new StreamObserver<OperationResponse>() {
 
             @Override
