@@ -1,10 +1,41 @@
 syntax = "proto3";
 
+import public "google/protobuf/empty.proto";
+
 package org.fs.proto;
 
 option java_multiple_files = true;
 option java_package = "org.fs.proto";
 
 service FileSystem {
-
+  rpc upload(UploadRequest) returns(OpResponse) {};
+  rpc delete(DeleteRequest) returns(OpResponse) {};
+  rpc rename(RenameRequest) returns(OpResponse) {};
+  rpc getFiles(google.protobuf.Empty) returns(FilesList) {};
 }
+
+message FileContent {
+  bytes content = 1;
+};
+
+message UploadRequest {
+  string fileName = 1;
+  FileContent fileContent = 2;
+};
+
+message DeleteRequest {
+  string fileName = 1;
+};
+
+message RenameRequest {
+  string oldFileName = 1;
+  string newFileName = 2;
+};
+
+message OpResponse {
+  string status = 1;
+};
+
+message FilesList {
+  repeated string files = 1;
+};

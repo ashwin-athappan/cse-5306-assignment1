@@ -1,0 +1,38 @@
+1725759669279:help
+1725759859431:cli
+1725759971650:help
+1725760017959:/help
+1725760635619:/list
+1725823625044:/upload abc.txt
+1725823632127:/upload
+1725823655686:/upload abc.txt
+1725823666968:/help
+1725823716888:/upload
+1725823792311:/upload abc.txt
+1725823804564:/upload "abc.txt"
+1725823902361:/upload abc.txt
+1725823940531:/upload "abc.txt"
+1725823950636:/upload filePath=abc.txt
+1725824055546:/upload abc.txt
+1725824073553:/upload filePath=abc.txt
+1725824087320:/upload filePath "abc.txt"
+1725824369448:/upload abc.txt
+1725824728578:/upload /Users/ashwinathappan/Documents/workspace/Projects/cse-5306-assignment1/part-1/client/src/main/resources/temp/a.txt
+1725824740433:/upload /Users/ashwinathappan/Documents/workspace/Projects/cse-5306-assignment1/part-1/client/src/main/resources/temp/b.txt
+1725831534055:/upload /Users/ashwinathappan/Documents/workspace/Projects/cse-5306-assignment1/part-1/client/src/main/resources/temp/a.txt
+1725831676938:/upload log.error(throwable.getMessage());
+1725831727826:/upload /Users/ashwinathappan/Documents/workspace/Projects/cse-5306-assignment1/part-1/client/src/main/resources/temp/a.txt
+1725832604366:/upload Throwable errorResponse = new Throwable("File " + fileName + " already exists");
+1725832629907:/upload /Users/ashwinathappan/Documents/workspace/Projects/cse-5306-assignment1/part-1/client/src/main/resources/temp/a.txt
+1725906948438:/list
+1725906958821:/delete a.txt
+1725906982449:/list
+1725906987056:/delete a.txt
+1725920411267:/upload /Users/ashwinathappan/Downloads/steam.dmg
+1725920462423:/list
+1725920490955:/upload /Users/ashwinathappan/Downloads/Form.jpeg
+1725920494968:/list
+1725920634143:/upload /Users/ashwinathappan/Downloads/steam.dmg
+1725920643075:/list
+1725920657132:/upload /Users/ashwinathappan/Downloads/Form.jpeg
+1725920660072:/list

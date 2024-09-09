@@ -1,6 +1,7 @@
 package org.sync.service;
 
 import com.google.protobuf.ByteString;
+import io.grpc.Metadata;
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,12 +54,14 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
                 responseObserver.onNext(operationResponse);
                 responseObserver.onCompleted();
             } else {
-                responseObserver.onError(new Throwable("File Creation Failed"));
+                Metadata metadata = new Metadata();
+                responseObserver.onError(io.grpc.Status.INTERNAL.withDescription("File Creation Failed").asRuntimeException(metadata));
             }
 
         } catch (IOException e) {
             log.error("File Creation Failed", e);
-            responseObserver.onError(new Throwable("File Creation Failed"));
+            Metadata metadata = new Metadata();
+            responseObserver.onError(io.grpc.Status.INTERNAL.withDescription("File Creation Failed").asRuntimeException(metadata));
         }
     }
 
@@ -76,12 +79,11 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
         try {
             String fileName = request.getFileName();
             log.info("DELETE - File Received in Server : {}", fileName);
-
-            File newFile = new File(rootDirectory.toString() + "/" + fileName);
-            boolean exists = newFile.exists();
+            File file = new File(rootDirectory.toString() + "/" + fileName);
+            boolean exists = file.exists();
             boolean result = false;
             if (exists) {
-                result = newFile.delete();
+                result = file.delete();
             } else {
                 throw new FileNotFoundException("File Not Found");
             }
@@ -96,8 +98,9 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
             }
 
         } catch (IOException e) {
-            log.error("File Creation Failed", e);
-            responseObserver.onError(new Throwable("File does not exist in the server"));
+            log.error("File Deletion Failed", e);
+            Metadata metadata = new Metadata();
+            responseObserver.onError(io.grpc.Status.INTERNAL.withDescription("File does not exist in the server").asRuntimeException(metadata));
         }
     }
 
@@ -133,12 +136,14 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
                 responseObserver.onNext(operationResponse);
                 responseObserver.onCompleted();
             } else {
-                responseObserver.onError(new Throwable("File Modification Failed"));
+                Metadata metadata = new Metadata();
+                responseObserver.onError(io.grpc.Status.INTERNAL.withDescription("File Modification Failed").asRuntimeException(metadata));
             }
 
         } catch (IOException e) {
             log.error("File Modification Failed", e);
-            responseObserver.onError(new Throwable("File does not exist in the server"));
+            Metadata metadata = new Metadata();
+            responseObserver.onError(io.grpc.Status.INTERNAL.withDescription("File Modification Failed").asRuntimeException(metadata));
         }
     }
 
@@ -169,11 +174,13 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
                 responseObserver.onNext(operationResponse);
                 responseObserver.onCompleted();
             } else {
-                responseObserver.onError(new Throwable("File Rename Failed"));
+                Metadata metadata = new Metadata();
+                responseObserver.onError(io.grpc.Status.INTERNAL.withDescription("File Rename Failed").asRuntimeException(metadata));
             }
         } catch (Exception e) {
-            log.error("File Rename Failed", e);
-            responseObserver.onError(new Throwable("File does not exist in the server"));
+            log.error("File does not exist in the server: ", e);
+            Metadata metadata = new Metadata();
+            responseObserver.onError(io.grpc.Status.INTERNAL.withDescription("File does not exist in the server").asRuntimeException(metadata));
         }
     }
 }
