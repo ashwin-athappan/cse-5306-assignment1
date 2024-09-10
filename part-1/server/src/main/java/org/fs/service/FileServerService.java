@@ -24,7 +24,7 @@ import java.nio.file.Path;
 @GrpcService
 @AllArgsConstructor
 public class FileServerService extends FileSystemGrpc.FileSystemImplBase {
-    private final Path rootDirectory;
+    private final String rootDirectory;
 
 
     @Override
@@ -45,7 +45,7 @@ public class FileServerService extends FileSystemGrpc.FileSystemImplBase {
                 throw new FileAlreadyExistsException(fileName);
             }
 
-            try (FileOutputStream fos = new FileOutputStream(rootDirectory.toString() + "/" + fileName)) {
+            try (FileOutputStream fos = new FileOutputStream(rootDirectory + "/" + fileName)) {
                 fos.write(content);
                 result = true;
             }
@@ -102,29 +102,37 @@ public class FileServerService extends FileSystemGrpc.FileSystemImplBase {
         log.info("rename::Rename file {} to {}", oldFileName, newFileName);
         File oldFile = new File(rootDirectory.toString() + "/" + oldFileName);
         File newFile = new File(rootDirectory.toString() + "/" + newFileName);
-        boolean result = oldFile.renameTo(newFile);
 
-        OpResponse operationResponse = OpResponse.newBuilder()
-                .setStatus("Rename successful : " + oldFileName + " to " + newFileName)
-                .build();
+        if (oldFile.exists()) {
+            boolean result = oldFile.renameTo(newFile);
 
-        if (result) {
-            responseObserver.onNext(operationResponse);
-            responseObserver.onCompleted();
+            OpResponse operationResponse = OpResponse.newBuilder()
+                    .setStatus("Rename successful : " + oldFileName + " to " + newFileName)
+                    .build();
+
+            if (result) {
+                responseObserver.onNext(operationResponse);
+                responseObserver.onCompleted();
+                log.info("rename::Rename successful");
+            } else {
+                Metadata metadata = new Metadata();
+                responseObserver.onError(Status.INTERNAL.withDescription("File rename failed").asRuntimeException(metadata));
+                log.info("rename::Rename failed");
+            }
         } else {
             Metadata metadata = new Metadata();
             responseObserver.onError(Status.INTERNAL.withDescription("File rename failed").asRuntimeException(metadata));
+            log.info("rename::File does not exist in the server");
         }
-        log.info("rename::Rename successful");
     }
 
     @Override
     public void getFiles(Empty request, StreamObserver<FilesList> responseObserver) {
         log.info("getFiles::Getting FilesList");
         try {
-            File folder = new File(rootDirectory.toFile().getAbsolutePath());
+            File folder = new File(rootDirectory);
             if (!folder.exists()) {
-                throw new FileNotFoundException("Folder not found : " + rootDirectory.toFile().getAbsolutePath());
+                throw new FileNotFoundException("Folder not found : " + rootDirectory);
             }
             File[] files = folder.listFiles();
             FilesList.Builder builder = FilesList.newBuilder();

@@ -15,7 +15,7 @@ public class FileSystemController {
 
     @GetMapping("/files")
     public String files() {
-        fileSystemService.getFiles();
+
         return "files";
     }
 }

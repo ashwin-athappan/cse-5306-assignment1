@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -23,42 +24,33 @@ public class FileSystemService {
     private ManagedChannel channel;
     private FileSystemGrpc.FileSystemStub asyncStub;
 
-    @Getter
-    @Setter
-    private List<String> listOfFiles;
-
-    @Getter
-    @Setter
-    private String response;
-
-    @Getter
-    @Setter
-    private String error;
-
     public FileSystemService() {
         channel = ManagedChannelBuilder.forAddress("localhost", 9090)
                 .usePlaintext()
                 .build();
         asyncStub = FileSystemGrpc.newStub(channel);
-        listOfFiles = null;
-        error = "";
-        response = "";
     }
 
-    public void upload(String filePath) {
+    public void upload(String filePath, CompletableFuture<List<String>> future) {
         FileContent fc = Utilities.getFileContent(filePath);
         String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
         UploadRequest request = UploadRequest.newBuilder().setFileName(fileName).setFileContent(fc).build();
         asyncStub.upload(request, new StreamObserver<OpResponse>() {
             @Override
             public void onNext(OpResponse opResponse) {
-                response = opResponse.getStatus();
+                List<String> response = new ArrayList<>();
+                response.add("SUCCESS");
+                response.add(opResponse.getStatus());
+                future.complete(response);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 Status s = Status.fromThrowable(throwable);
-                error = s.getDescription();
+                List<String> errors = new ArrayList<>();
+                errors.add("ERROR");
+                errors.add(s.getDescription());
+                future.complete(errors);
             }
 
             @Override
@@ -68,18 +60,24 @@ public class FileSystemService {
         });
     }
 
-    public void delete(String fileName) {
+    public void delete(String fileName, CompletableFuture<List<String>> future) {
         DeleteRequest request = DeleteRequest.newBuilder().setFileName(fileName).build();
         asyncStub.delete(request, new StreamObserver<OpResponse>() {
             @Override
             public void onNext(OpResponse opResponse) {
-                response = opResponse.getStatus();
+                List<String> response = new ArrayList<>();
+                response.add("SUCCESS");
+                response.add(opResponse.getStatus());
+                future.complete(response);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 Status s = Status.fromThrowable(throwable);
-                error = s.getDescription();
+                List<String> errors = new ArrayList<>();
+                errors.add("ERROR");
+                errors.add(s.getDescription());
+                future.complete(errors);
             }
 
             @Override
@@ -90,18 +88,24 @@ public class FileSystemService {
 
     }
 
-    public void rename(String oldName, String newName) {
+    public void rename(String oldName, String newName, CompletableFuture<List<String>> future) {
         RenameRequest request = RenameRequest.newBuilder().setOldFileName(oldName).setNewFileName(newName).build();
         asyncStub.rename(request, new StreamObserver<OpResponse>() {
             @Override
             public void onNext(OpResponse opResponse) {
-                response = opResponse.getStatus();
+                List<String> response = new ArrayList<>();
+                response.add("SUCCESS");
+                response.add(opResponse.getStatus());
+                future.complete(response);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 Status s = Status.fromThrowable(throwable);
-                error = s.getDescription();
+                List<String> errors = new ArrayList<>();
+                errors.add("ERROR");
+                errors.add(s.getDescription());
+                future.complete(errors);
             }
 
             @Override
@@ -111,24 +115,26 @@ public class FileSystemService {
         });
     }
 
-    public void getFiles() {
+    public void getFiles(CompletableFuture<List<String>> future) {
         asyncStub.getFiles(Empty.getDefaultInstance(), new StreamObserver<FilesList>() {
             @Override
             public void onNext(FilesList filesList) {
                 List<String> files = new ArrayList<>();
-                log.debug("LIST - {}", listOfFiles);
                 int n = filesList.getFilesCount();
                 for (int i = 0; i < n; i++) {
                     files.add(filesList.getFiles(i));
                 }
                 log.debug(Arrays.toString(files.toArray()));
-                setListOfFiles(files);
+                future.complete(files);
             }
 
             @Override
             public void onError(Throwable throwable) {
                 Status s = Status.fromThrowable(throwable);
-                error = s.getDescription();
+                List<String> errors = new ArrayList<>();
+                errors.add("ERROR");
+                errors.add(s.getDescription());
+                future.complete(errors);
             }
 
             @Override

@@ -12,27 +12,32 @@ import java.nio.file.*;
 @Configuration
 public class FileMonitorConfig {
 
-    private Path rootDirectory;
+    private String rootDirectory;
 
     @Bean
-    public Path getRootDirectory() {
-        rootDirectory  = Paths.get(System.getProperty("user.dir") + "/monitor/src/main/resources/files");
-        return rootDirectory;
+    public String getRootDirectory() {
+        String path = Paths.get("").toAbsolutePath().toString();
+        if (path.substring(path.lastIndexOf("/") + 1).equals("monitor")) {
+            path = path + "/src/main/resources/files";
+        } else {
+            path = path + "/monitor/src/main/resources/files";
+        }
+        return path;
     }
 
     @Bean
     public WatchKey getWatchService() {
         WatchKey watchKey;
         try {
-            rootDirectory  = Paths.get(System.getProperty("user.dir") + "/monitor/src/main/resources/files");
+            rootDirectory  = getRootDirectory();
 
-            if (!Files.isDirectory(rootDirectory)) {
+            if (!Files.isDirectory(Paths.get(rootDirectory))) {
                 throw new RuntimeException("incorrect monitoring folder: " + rootDirectory);
             }
 
             WatchService watchService = FileSystems.getDefault().newWatchService();
 
-            watchKey = rootDirectory.register(watchService,
+            watchKey = Paths.get(rootDirectory).register(watchService,
                     StandardWatchEventKinds.ENTRY_CREATE,
                     StandardWatchEventKinds.ENTRY_DELETE,
                     StandardWatchEventKinds.ENTRY_MODIFY);

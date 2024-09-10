@@ -19,10 +19,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 @AllArgsConstructor
 public class UtilitiesService {
 
-    private final Path rootDirectory;
+    private final String rootDirectory;
 
     public FileContent getFileContent(String fileName) {
-        File createdFile = new File(rootDirectory.toString() + "/" + fileName);
+        File createdFile = new File(rootDirectory + "/" + fileName);
         byte[] content = new byte[(int) createdFile.length()];
         try (FileInputStream fis = new FileInputStream(createdFile)) {
             int result = fis.read(content);

@@ -19,7 +19,7 @@ import java.util.List;
 public class FileMonitorService {
 
     private final WatchKey watchKey;
-    private final Path rootDirectory;
+    private final String rootDirectory;
     private final FileSyncService fileSyncService;
     private final UtilitiesService utilitiesService;
     private final DirectoryDiffService directoryDiffService;
@@ -54,8 +54,8 @@ public class FileMonitorService {
                 String oldName = second.context().toString();
                 String newName = first.context().toString();
                 fileSyncService.renameFile(oldName, newName);
-                String oldPath = rootDirectory.toAbsolutePath() + "/" + oldName;
-                String newPath = rootDirectory.toAbsolutePath() + "/" + newName;
+                String oldPath = rootDirectory + "/" + oldName;
+                String newPath = rootDirectory + "/" + newName;
                 directoryDiffService.renameFile(oldPath, newPath);
             } else {
                 for (WatchEvent<?> watchEvent : watchEvents) {
@@ -85,13 +85,13 @@ public class FileMonitorService {
     public void handleEvents(WatchEvent<?> watchEvent) {
         log.info("handleEvents::WatchKey received {}", watchEvent.kind());
 
-        if (Files.isDirectory(Paths.get(rootDirectory.toAbsolutePath() + "/" + watchEvent.context()))) {
+        if (Files.isDirectory(Paths.get(rootDirectory + "/" + watchEvent.context()))) {
             log.info("handleEvents::{} is a Directory", watchEvent.context());
         } else {
             if (watchEvent.kind() == StandardWatchEventKinds.ENTRY_CREATE) {
                 log.info("handleEvents::Creating {}", watchEvent.context());
                 String fileName = watchEvent.context().toString();
-                String path = rootDirectory.toAbsolutePath() + "/" + watchEvent.context();
+                String path = rootDirectory+ "/" + watchEvent.context();
                 // Get File Contents
                 FileContent fileContent = utilitiesService.getFileContent(fileName);
                 fileSyncService.createFile(fileName, fileContent);
@@ -100,7 +100,7 @@ public class FileMonitorService {
 
             if (watchEvent.kind() == StandardWatchEventKinds.ENTRY_DELETE) {
                 log.info("handleEvents::Deleting {}", watchEvent.context());
-                String path = rootDirectory.toAbsolutePath() + "/" + watchEvent.context();
+                String path = rootDirectory + "/" + watchEvent.context();
                 fileSyncService.deleteFile(watchEvent.context().toString());
                 directoryDiffService.deleteFile(path);
             }
@@ -108,7 +108,7 @@ public class FileMonitorService {
             if (watchEvent.kind() == StandardWatchEventKinds.ENTRY_MODIFY) {
                 log.info("handleEvents::Updating {}", watchEvent.context());
                 String fileName = watchEvent.context().toString();
-                String path = rootDirectory.toAbsolutePath() + "/" + watchEvent.context();
+                String path = rootDirectory + "/" + watchEvent.context();
                 // Get File Contents
                 FileContent fileContent = utilitiesService.getFileContent(fileName);
                 fileSyncService.modifyFile(fileName, fileContent);

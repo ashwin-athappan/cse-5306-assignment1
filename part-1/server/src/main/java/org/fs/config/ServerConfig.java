@@ -1,15 +1,25 @@
 package org.fs.config;
 
+import jakarta.servlet.ServletContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Configuration
 public class ServerConfig {
+    @Autowired
+    ServletContext context;
+
     @Bean
-    public Path getRootDirectory() {
-        return Paths.get(System.getProperty("user.dir") + "/server/src/main/resources/files");
+    public String getRootDirectory() {
+        String path = Paths.get("").toAbsolutePath().toString();
+        if (path.substring(path.lastIndexOf("/") + 1).equals("server")) {
+            path = path + "/src/main/resources/files";
+        } else {
+            path = path + "/server/src/main/resources/files";
+        }
+        return path;
     }
 }

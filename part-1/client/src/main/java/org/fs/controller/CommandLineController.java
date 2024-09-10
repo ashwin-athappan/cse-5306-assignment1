@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @ShellComponent
@@ -32,11 +33,10 @@ public class CommandLineController {
         return builder.toString();
     }
 
-    @ShellMethod(key = "/upload", value = "upload a file")
-    public String upload(
-            @ShellOption(value = "",
-                    help = "/upload <file-path> - this command helps you upload file to the remote server") String filePath) {
-
+    @ShellMethod(key = "/upload")
+    public String upload(@ShellOption(arity = 1, value = "", help = "") String filePath) {
+        log.info(filePath);
+        String result = "";
         try {
             if (filePath == null || filePath.isEmpty()) {
                 throw new FileNotFoundException(filePath);
@@ -48,17 +48,32 @@ public class CommandLineController {
                 throw new FileNotFoundException(filePath);
             }
 
-            fileSystemService.upload(filePath);
+            /* Since the files are being fetched asynchronously
+             * The while loop ensures to capture the updated list of files
+             *
+             * Here if the listOfFiles is null then the result has not arrived from the server yet
+             */
+            CompletableFuture<List<String>> future = new CompletableFuture<>();
 
-            String error = waitForResponse();
-            if (error != null) return error;
+            fileSystemService.upload(filePath, future);
 
-        } catch (IOException e) {
+            List<String> response = future.get();
+            if (response.get(0).equals("SUCCESS")) {
+                result = response.get(1);
+            } else if (response.get(0).equals("ERROR")) {
+                throw new IOException(response.get(1));
+            }
+
+
+        } catch (IOException | InterruptedException | ExecutionException e) {
             StringBuilder builder = new StringBuilder();
             if (e.toString().contains("FileNotFoundException")) {
                 builder.append("File not found\n");
-            } else {
-                builder.append("Error: ").append(e.toString()).append("\n");
+            } else if (e.toString().contains("exists")) {
+                builder.append(e.getMessage());
+            }
+            else {
+                builder.append("Error: ").append(e).append("\n");
             }
             builder.append("Usage : /upload <file-path>\n");
             builder.append("<file-path> - should be the absolute path of the file to upload\n");
@@ -67,20 +82,26 @@ public class CommandLineController {
             return builder.toString();
         }
 
-        return "Received : " + filePath;
+        return result;
     }
 
     @ShellMethod(key = "/delete")
     public String delete(
             @ShellOption(value = "",
                     help = "/delete <file-name> - this command helps you delete a file from the server") String fileName) {
+        String result = "";
         try {
-            fileSystemService.delete(fileName);
+            CompletableFuture<List<String>> future = new CompletableFuture<>();
+            fileSystemService.delete(fileName, future);
+            List<String> response = future.get();
 
-            String error = waitForResponse();
-            if (error != null) return error;
+            if (response.get(0).equals("SUCCESS")) {
+                result = response.get(1);
+            } else if (response.get(0).equals("ERROR")) {
+                throw new IOException(response.get(1));
+            }
 
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException | ExecutionException e) {
             StringBuilder builder = new StringBuilder();
             builder.append("Error : ");
             builder.append(e.getMessage());
@@ -90,19 +111,24 @@ public class CommandLineController {
             return builder.toString();
         }
 
-        return "Deleted " + fileName + " from the server";
+        return result;
     }
 
-    @ShellMethod(key = "/rename")
-    public String rename(
-            @ShellOption(value = "",
-                    help = "/rename <old-file-name> <new-file-name> - this command helps you rename a file in the server") String oldFileName,
-            @ShellOption(value = "",
-                    help = "/rename <old-file-name> <new-file-name> - this command helps you rename a file in the server") String newFileName) {
+    @ShellMethod(value = "Rename files in the server", key = "/rename")
+    public String rename(@ShellOption(value = "", help = "") String oldFileName, @ShellOption(value = " ", help = "") String newFileName) {
 
+        String result = "";
         try {
-            fileSystemService.rename(oldFileName, newFileName);
-        } catch (Exception e) {
+            CompletableFuture<List<String>> future = new CompletableFuture<>();
+            log.info("{} - {}", oldFileName, newFileName);
+            fileSystemService.rename(oldFileName, newFileName, future);
+            List<String> response = future.get();
+            if (response.get(0).equals("SUCCESS")) {
+                result = response.get(1);
+            } else if (response.get(0).equals("ERROR")) {
+                throw new IOException(response.get(1));
+            }
+        } catch (IOException | InterruptedException | ExecutionException e) {
             StringBuilder builder = new StringBuilder();
             builder.append("Error : ");
             builder.append(e.getMessage());
@@ -112,60 +138,35 @@ public class CommandLineController {
             return builder.toString();
         }
 
-        return "Renamed " + oldFileName + " to " + newFileName + " in the server";
+        return result;
     }
 
     @ShellMethod(key = "/list")
     public String list() {
-        fileSystemService.getFiles();
+        CompletableFuture<List<String>> future = new CompletableFuture<>();
+        StringBuilder builder = new StringBuilder();
+        try {
+            fileSystemService.getFiles(future);
 
-        List<String> files = fileSystemService.getListOfFiles();
+            List<String> files = future.get();
 
-        /* Since the files are being fetched asynchronously
-         * The while loop ensures to capture the updated list of files
-         *
-         * Here if the listOfFiles is null then the result has not arrived from the server yet
-         */
-
-        while (files == null) {
-            log.debug("File list is null");
-            if (!fileSystemService.getError().isEmpty()) {
-                String error = fileSystemService.getError();
-                fileSystemService.setError("");
-                return "Error : " + error;
+            if (files.get(0).equals("ERROR")) {
+                throw new IOException(files.get(1));
             }
 
-            files = fileSystemService.getListOfFiles();
-        }
-
-        // Resetting the listOfFiles variable so we do not print the previously fetched result
-        fileSystemService.setListOfFiles(null);
-
-        // Preparing the list to be printed back to the CLI
-        StringBuilder builder = new StringBuilder();
-        builder.append("List of files\n");
-        int i = 1;
-        for (String file : files) {
-            builder.append("\t").append(i++).append(". ").append(file).append("\n");
+            // Preparing the list to be printed back to the CLI
+            builder.append("List of files\n");
+            int i = 1;
+            for (String file : files) {
+                builder.append("\t").append(i++).append(". ").append(file).append("\n");
+            }
+        } catch (IOException | InterruptedException | ExecutionException e) {
+            builder = new StringBuilder();
+            builder.append("Error : ");
+            builder.append(e.getMessage());
+            return builder.toString();
         }
 
         return builder.toString();
-    }
-
-    private String waitForResponse() {
-        String response = fileSystemService.getResponse();
-
-        while (response == null || response.isEmpty()) {
-
-            if (!fileSystemService.getError().isEmpty()) {
-                String error = fileSystemService.getError();
-                fileSystemService.setError("");
-                return "Error : " + error;
-            }
-
-            response = fileSystemService.getResponse();
-            fileSystemService.setResponse("");
-        }
-        return response;
     }
 }

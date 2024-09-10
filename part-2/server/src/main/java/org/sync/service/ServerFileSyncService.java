@@ -19,7 +19,7 @@ import java.nio.file.Path;
 @AllArgsConstructor
 public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
 
-    private final Path rootDirectory;
+    private final String rootDirectory;
 
     /**
      * @description This is the grpc implementation for creating a file.
@@ -38,25 +38,18 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
             ByteString byteStringContent = fileContent.getContent();
             byte[] content = byteStringContent.toByteArray();
             log.info("CREATE - File Received in Server : {}", fileName);
-            File newFile = new File(rootDirectory.toString() + "/" + fileName);
-            boolean result;
+            File newFile = new File(rootDirectory + "/" + fileName);
 
-            try (FileOutputStream fos = new FileOutputStream(rootDirectory.toString() + "/" + fileName)) {
+            try (FileOutputStream fos = new FileOutputStream(rootDirectory + "/" + fileName)) {
                 fos.write(content);
-                result = true;
             }
 
             OperationResponse operationResponse = OperationResponse.newBuilder()
                     .setMessage("File Created in Server : " + fileName)
                     .setStatus(Status.SUCCESS).build();
 
-            if (result) {
-                responseObserver.onNext(operationResponse);
-                responseObserver.onCompleted();
-            } else {
-                Metadata metadata = new Metadata();
-                responseObserver.onError(io.grpc.Status.INTERNAL.withDescription("File Creation Failed").asRuntimeException(metadata));
-            }
+            responseObserver.onNext(operationResponse);
+            responseObserver.onCompleted();
 
         } catch (IOException e) {
             log.error("File Creation Failed", e);
@@ -79,7 +72,7 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
         try {
             String fileName = request.getFileName();
             log.info("DELETE - File Received in Server : {}", fileName);
-            File file = new File(rootDirectory.toString() + "/" + fileName);
+            File file = new File(rootDirectory + "/" + fileName);
             boolean exists = file.exists();
             boolean result = false;
             if (exists) {
@@ -123,7 +116,7 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
             log.info("MODIFY - File Received in Server : {}", fileName);
 
             boolean result;
-            try (FileOutputStream fos = new FileOutputStream(rootDirectory.toString() + "/" + fileName)) {
+            try (FileOutputStream fos = new FileOutputStream(rootDirectory + "/" + fileName)) {
                 fos.write(content);
                 result = true;
             }
@@ -162,8 +155,8 @@ public class ServerFileSyncService extends FileSyncGrpc.FileSyncImplBase {
             String oldFileName = request.getOldFileName();
             String newFileName = request.getNewFileName();
             log.info("RENAME - Request received in Server - Renaming : {} to {}", oldFileName, newFileName);
-            File oldFile = new File(rootDirectory.toString() + "/" + oldFileName);
-            File newFile = new File(rootDirectory.toString() + "/" + newFileName);
+            File oldFile = new File(rootDirectory + "/" + oldFileName);
+            File newFile = new File(rootDirectory + "/" + newFileName);
             boolean result = oldFile.renameTo(newFile);
 
             OperationResponse operationResponse = OperationResponse.newBuilder()

@@ -16,12 +16,21 @@ public class DirectoryDiffService {
     private final UtilitiesService utilitiesService;
 
     private final HashMap<String, Long> checkpoint;
-    private final String checkpointPath = System.getProperty("user.dir") + "/monitor/src/main/resources/diff/last_checkpoint.txt";
-    private final String localFilesPath = System.getProperty("user.dir") + "/monitor/src/main/resources/files";
+    private final String checkpointPath;
+    private final String localFilesPath;
 
     public DirectoryDiffService(FileSyncService fileSyncService, UtilitiesService utilitiesService) {
         this.fileSyncService = fileSyncService;
         this.utilitiesService = utilitiesService;
+
+        String path = Paths.get("").toAbsolutePath().toString();
+        if (path.substring(path.lastIndexOf("/") + 1).equals("monitor")) {
+            checkpointPath = path + "/src/main/resources/diff/last_checkpoint.txt";
+            localFilesPath = path + "/src/main/resources/files";
+        } else {
+            checkpointPath = path + "/monitor/src/main/resources/diff/last_checkpoint.txt";
+            localFilesPath = path + "/monitor/src/main/resources/files";
+        }
 
         this.checkpoint = new HashMap<>();
         try {

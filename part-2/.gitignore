@@ -37,7 +37,5 @@ build/
 ### Mac OS ###
 .DS_Store
 
-**/temp/
 **/files/
-
-server.log
+**/uploads/
