@@ -1,4 +1,0 @@
-/Users/ashwinathappan/Documents/workspace/Projects/cse-5306-assignment1/part-2/monitor/src/main/resources/files/e.txt|1725941805726
-/Users/ashwinathappan/Documents/workspace/Projects/cse-5306-assignment1/part-2/monitor/src/main/resources/files/d.txt|1725941687193
-/Users/ashwinathappan/Documents/workspace/Projects/cse-5306-assignment1/part-2/monitor/src/main/resources/files/b.txt|1725941797239
-/Users/ashwinathappan/Documents/workspace/Projects/cse-5306-assignment1/part-2/monitor/src/main/resources/files/a.txt|1725941692177

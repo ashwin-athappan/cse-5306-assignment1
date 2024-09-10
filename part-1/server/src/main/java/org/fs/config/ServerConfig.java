@@ -15,11 +15,22 @@ public class ServerConfig {
     @Bean
     public String getRootDirectory() {
         String path = Paths.get("").toAbsolutePath().toString();
-        if (path.substring(path.lastIndexOf("/") + 1).equals("server")) {
-            path = path + "/src/main/resources/files";
+
+        String OS = System.getProperty("os.name").toLowerCase();
+        if (OS.contains("win")) {
+            if (path.substring(path.lastIndexOf("\\") + 1).equals("server")) {
+                path = path + "\\src\\main\\resources\\files";
+            } else {
+                path = path + "\\server\\src\\main\\resources\\files";
+            }
         } else {
-            path = path + "/server/src/main/resources/files";
+            if (path.substring(path.lastIndexOf("/") + 1).equals("server")) {
+                path = path + "/src/main/resources/files";
+            } else {
+                path = path + "/server/src/main/resources/files";
+            }
         }
+
         return path;
     }
 }

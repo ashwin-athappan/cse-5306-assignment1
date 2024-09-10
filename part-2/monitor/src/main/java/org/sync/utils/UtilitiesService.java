@@ -40,4 +40,27 @@ public class UtilitiesService {
         BasicFileAttributes attributes = Files.readAttributes(file, BasicFileAttributes.class);
         return attributes.lastModifiedTime().toMillis();
     }
+
+    public String getOSSpecificPath(String filePath) {
+        String rootDir = Paths.get("").toAbsolutePath().toString();
+        String OS = System.getProperty("os.name").toLowerCase();
+
+        if (rootDir.substring(rootDir.lastIndexOf("\\") + 1).equals("monitor")) {
+            if (OS.contains("win")) {
+                filePath = filePath.replace("/", "\\");
+                rootDir = rootDir + "\\src\\main\\resources" + filePath;
+            } else {
+                rootDir = rootDir + "/src/main/resources" + filePath;
+            }
+        } else {
+            if (OS.contains("win")) {
+                filePath = filePath.replace("/", "\\");
+                rootDir = rootDir + "\\monitor\\src\\main\\resources" + filePath;
+            } else {
+                rootDir = rootDir + "/monitor/src/main/resources" + filePath;
+            }
+        }
+
+        return rootDir;
+    }
 }

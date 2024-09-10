@@ -33,7 +33,13 @@ public class FileSystemService {
 
     public void upload(String filePath, CompletableFuture<List<String>> future) {
         FileContent fc = Utilities.getFileContent(filePath);
-        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        String fileName = "";
+        String OS = System.getProperty("os.name").toLowerCase();
+        if (OS.contains("win")) {
+            fileName = filePath.substring(filePath.lastIndexOf("\\") + 1);
+        } else {
+            fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
+        }
         UploadRequest request = UploadRequest.newBuilder().setFileName(fileName).setFileContent(fc).build();
         asyncStub.upload(request, new StreamObserver<OpResponse>() {
             @Override

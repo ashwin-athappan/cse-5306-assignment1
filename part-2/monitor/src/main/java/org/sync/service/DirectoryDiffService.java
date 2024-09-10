@@ -24,14 +24,8 @@ public class DirectoryDiffService {
         this.utilitiesService = utilitiesService;
 
         String path = Paths.get("").toAbsolutePath().toString();
-        if (path.substring(path.lastIndexOf("/") + 1).equals("monitor")) {
-            checkpointPath = path + "/src/main/resources/diff/last_checkpoint.txt";
-            localFilesPath = path + "/src/main/resources/files";
-        } else {
-            checkpointPath = path + "/monitor/src/main/resources/diff/last_checkpoint.txt";
-            localFilesPath = path + "/monitor/src/main/resources/files";
-        }
-
+        checkpointPath = utilitiesService.getOSSpecificPath("/diff/last_checkpoint.txt");
+        localFilesPath = utilitiesService.getOSSpecificPath("/files");
         this.checkpoint = new HashMap<>();
         try {
             List<String> lines = Files.readAllLines(Paths.get(checkpointPath));

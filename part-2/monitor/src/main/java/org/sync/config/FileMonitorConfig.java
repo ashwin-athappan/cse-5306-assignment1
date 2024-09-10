@@ -17,10 +17,19 @@ public class FileMonitorConfig {
     @Bean
     public String getRootDirectory() {
         String path = Paths.get("").toAbsolutePath().toString();
-        if (path.substring(path.lastIndexOf("/") + 1).equals("monitor")) {
-            path = path + "/src/main/resources/files";
+        String OS = System.getProperty("os.name").toLowerCase();
+        if (OS.contains("win")) {
+            if (path.substring(path.lastIndexOf("\\") + 1).equals("monitor")) {
+                path = path + "\\src\\main\\resources\\files";
+            } else {
+                path = path + "\\monitor\\src\\main\\resources\\files";
+            }
         } else {
-            path = path + "/monitor/src/main/resources/files";
+            if (path.substring(path.lastIndexOf("/") + 1).equals("monitor")) {
+                path = path + "/src/main/resources/files";
+            } else {
+                path = path + "/monitor/src/main/resources/files";
+            }
         }
         return path;
     }
