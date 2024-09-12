@@ -60,22 +60,21 @@ Use the above-mentioned versions for reduced compatibility issues. but anything 
 
 Using Terminal:
 
-```bash
-cd part-2
-```
+<pre>
+<font color="green">cd</font> part-2
+</pre>
 
 Compile the Project
 
-```bash
-mvn clean install
-```
+<pre>
+<font color="green">mvn</font> <font color="skyblue">clean install</font>
+</pre>
 
 RUN SERVER
-<code>
-    <pre>
-    <font color="green">mvn</font> <font color="yellow">-pl</font> server <font color="green">spring-boot</font>:<font color="skyblue">run</font>
-    </pre>
-</code>
+
+<pre>
+<font color="green">mvn</font> <font color="yellow">-pl</font> server <font color="green">spring-boot</font>:<font color="skyblue">run</font>
+</pre>
 
 RUN MONITOR
 
