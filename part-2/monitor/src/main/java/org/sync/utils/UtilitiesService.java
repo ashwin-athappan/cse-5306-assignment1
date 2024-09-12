@@ -48,19 +48,76 @@ public class UtilitiesService {
         if (rootDir.substring(rootDir.lastIndexOf("\\") + 1).equals("monitor")) {
             if (OS.contains("win")) {
                 filePath = filePath.replace("/", "\\");
-                rootDir = rootDir + "\\src\\main\\resources" + filePath;
+                rootDir = rootDir + "\\src\\main\\resources";
+                createFilesAndDirectories(rootDir, filePath, OS);
+                rootDir = rootDir + filePath;
             } else {
-                rootDir = rootDir + "/src/main/resources" + filePath;
+                rootDir = rootDir + "/src/main/resources";
+                createFilesAndDirectories(rootDir, filePath, OS);
+                rootDir = rootDir + filePath;
             }
         } else {
             if (OS.contains("win")) {
                 filePath = filePath.replace("/", "\\");
-                rootDir = rootDir + "\\monitor\\src\\main\\resources" + filePath;
+                rootDir = rootDir + "\\monitor\\src\\main\\resources";
+                createFilesAndDirectories(rootDir, filePath, OS);
+                rootDir = rootDir + filePath;
             } else {
-                rootDir = rootDir + "/monitor/src/main/resources" + filePath;
+                rootDir = rootDir + "/monitor/src/main/resources";
+                createFilesAndDirectories(rootDir, filePath, OS);
+                rootDir = rootDir + filePath;
+            }
+        }
+
+        if (rootDir.contains("diff")) {
+            File directory = new File(Paths.get("").toAbsolutePath().toString() + "");
+        } else {
+            File directory = new File(rootDir);
+            if (!directory.exists()) {
+                directory.mkdir();
             }
         }
 
         return rootDir;
+    }
+
+    private void createFilesAndDirectories(String rootDir, String filePath, String os) {
+        try {
+            if (os.contains("win")) {
+                if (filePath.contains("diff")) {
+                    File directory = new File(rootDir + "\\diff");
+                    if (!directory.exists()) {
+                        directory.mkdir();
+                    }
+                    File file = new File(rootDir + filePath);
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    }
+                } else {
+                    File directory = new File(rootDir + "\\" + filePath);
+                    if (!directory.exists()) {
+                        directory.mkdir();
+                    }
+                }
+            } else {
+                if (filePath.contains("diff")) {
+                    File directory = new File(rootDir + "/diff");
+                    if (!directory.exists()) {
+                        directory.mkdir();
+                    }
+                    File file = new File(rootDir + filePath);
+                    if (!file.exists()) {
+                        file.createNewFile();
+                    }
+                } else {
+                    File directory = new File(rootDir + "\\" + filePath);
+                    if (!directory.exists()) {
+                        directory.mkdir();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            log.error("createFiles::Error while creating file {}", filePath);
+        }
     }
 }

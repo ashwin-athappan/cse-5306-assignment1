@@ -1,5 +1,5 @@
 spring:
   application:
-    name: file-system-server
+    name: add-sort-server
 server:
   port: 8081

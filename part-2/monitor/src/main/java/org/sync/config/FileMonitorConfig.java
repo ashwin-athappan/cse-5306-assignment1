@@ -1,10 +1,10 @@
 package org.sync.config;
 
-import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -31,6 +31,12 @@ public class FileMonitorConfig {
                 path = path + "/monitor/src/main/resources/files";
             }
         }
+
+        File directory = new File(path);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+
         return path;
     }
 

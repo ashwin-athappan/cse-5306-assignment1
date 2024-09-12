@@ -1,4 +1,4 @@
-package org.fs;
+package org.as;
 
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
@@ -17,7 +17,7 @@ public class ClientApplication
 
     @Bean
     public PromptProvider myPromptProvider() {
-        return () -> new AttributedString("file-service:>",
+        return () -> new AttributedString("add-sort-service:>",
                 AttributedStyle.BOLD.foreground(AttributedStyle.BLUE));
     }
 }

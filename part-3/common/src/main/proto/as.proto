@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package org.as.proto;
+
+option java_multiple_files = true;
+option java_package = "org.as.proto";
+
+service AddSort {
+  rpc add(AddRequest) returns(AddResponse) {};
+  rpc sort(SortRequest) returns(SortResponse) {};
+}
+
+message AddRequest {
+  int32 i = 1;
+  int32 j = 2;
+}
+
+message AddResponse {
+  int32 sum = 1;
+}
+
+message SortRequest {
+  Algorithm algorithm = 1;
+  repeated int32 array = 2;
+}
+
+message SortResponse {
+  string message = 1;
+  repeated int32 array = 2;
+}
+
+enum Algorithm {
+  BUBBLE_SORT = 0;
+  INSERTION_SORT = 1;
+  SELECTION_SORT = 2;
+  MERGE_SORT = 3;
+  QUICK_SORT = 4;
+}

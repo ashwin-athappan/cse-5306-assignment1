@@ -2,8 +2,6 @@ package org.fs.service;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Empty;
-import com.google.protobuf.LazyStringArrayList;
-import com.google.protobuf.ProtocolStringList;
 import io.grpc.Metadata;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
@@ -18,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
-import java.nio.file.Path;
 
 @Slf4j
 @GrpcService
@@ -137,7 +134,7 @@ public class FileServerService extends FileSystemGrpc.FileSystemImplBase {
             File[] files = folder.listFiles();
             FilesList.Builder builder = FilesList.newBuilder();
             assert files != null;
-            for (File file: files) {
+            for (File file : files) {
                 String fileName = file.getName();
                 builder.addFiles(fileName);
             }

@@ -3,7 +3,7 @@ package org.sync.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.nio.file.Paths;
 
 @Configuration
@@ -26,6 +26,12 @@ public class ServerFileSyncConfig {
                 path = path + "/server/src/main/resources/uploads";
             }
         }
+
+        File directory = new File(path);
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+
         return path;
     }
 }

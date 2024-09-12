@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.File;
 import java.nio.file.Paths;
 
 @Configuration
@@ -29,6 +30,11 @@ public class ServerConfig {
             } else {
                 path = path + "/server/src/main/resources/files";
             }
+        }
+
+        File directory = new File(path);
+        if (!directory.exists()) {
+            directory.mkdir();
         }
 
         return path;
